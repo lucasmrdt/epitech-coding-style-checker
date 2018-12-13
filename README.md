@@ -1,20 +1,21 @@
-![demo](assets/demo.gif)
-
-[Thanks to **ronanboiteau**'s checker](https://github.com/ronanboiteau/NormEZ)
 
 # epitech-coding-style-checker
 
 **Check your coding style while you're coding :rocket:**
 
+![demo](assets/demo.gif)
+
+[Thanks to **ronanboiteau**'s checker](https://github.com/ronanboiteau/NormEZ)
+
 ## Features
 
 - :white_check_mark: Lines with too many columns (> 80).
 - :white_check_mark: Forbidden files: every regular file that does not match Makefile, *.c or *.h (ex: *.o, *.gch, bsq, ...) & that is not mentioned in a .gitignore file located in your current working directory.
-- :white_check_mark: [Not exhaustive] Too broad filenames (ex: string.c, algo.c, my_algorithm.c, ...).
+- :white_check_mark: Too broad filenames (ex: string.c, algo.c, my_algorithm.c, ...).
 - :white_check_mark: Missing or corrupted header in sources files (.c), headers (.h) & Makefiles.
 - :white_check_mark: Functions that contain more than 20 lines.
 - :white_check_mark: Several semicolon-separated assignments on the same line.
-- :white_check_mark: [Not exhaustive] Forbidden functions (printf(), dprintf(), atoi(), memcpy(), scanf(), strlen()...).
+- :white_check_mark: Forbidden functions (printf(), dprintf(), atoi(), memcpy(), scanf(), strlen()...).
 - :white_check_mark: Trailing space(s) and/or tabulation(s) at the end of a line.
 - :white_check_mark: Filenames that don't respect the snake_case naming convention.
 - :white_check_mark: Condition and assignment on the same line.
