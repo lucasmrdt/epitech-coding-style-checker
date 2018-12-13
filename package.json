@@ -1,6 +1,7 @@
 {
     "name": "epitech-coding-style-checker",
     "displayName": "epitech-coding-style-checker",
+    "icon": "assets/icon.png",
     "description": "check your epitech coding style while you're coding",
     "version": "0.0.1",
     "engines": {
