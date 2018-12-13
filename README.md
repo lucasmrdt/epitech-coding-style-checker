@@ -54,7 +54,7 @@ brew install ruby
 ## Install
 
 - Do **CTRL + P** on vscode.
-- Past this `ext install lucasmarandat.epitech-styling-code`
+- Past this `ext install lucasmarandat.epitech-styling-code`
 - Open an project folder and **enjoy !**
 
 ## Have an issue ?
