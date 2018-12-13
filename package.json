@@ -1,9 +1,15 @@
 {
     "name": "epitech-coding-style-checker",
     "displayName": "epitech-coding-style-checker",
+    "publisher": "lucasmarandat",
     "icon": "assets/icon.png",
     "description": "check your epitech coding style while you're coding",
     "version": "0.0.1",
+    "--baseContentUrl": "images",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lucasmrdt/epitech-coding-style-checker"
+    },
     "engines": {
         "vscode": "^1.29.0"
     },
