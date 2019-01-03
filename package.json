@@ -4,7 +4,7 @@
     "publisher": "lucasmarandat",
     "icon": "assets/icon.png",
     "description": "check your epitech coding style while you're coding",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "--baseContentUrl": "images",
     "repository": {
         "type": "git",
@@ -19,7 +19,8 @@
     "activationEvents": [
         "onLanguage:c",
         "onLanguage:cpp",
-        "workspaceContains:**/*.c"
+        "workspaceContains:**/*.c",
+        "onCommand:extension.coding-style"
     ],
     "main": "./out/extension",
     "scripts": {
