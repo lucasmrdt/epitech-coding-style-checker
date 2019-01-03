@@ -86,7 +86,7 @@ brew install ruby
 
 ## Have an issue ?
 
-Write it [here](http://google.fr).
+Write it [here](https://github.com/lucasmrdt/epitech-coding-style-checker/issues).
 
 ___
 
