@@ -178,6 +178,7 @@ class CodingStyleChecker
       check_too_broad_filename
       check_header
       check_several_assignments
+      check_forbidden_keyword_func
       check_too_many_else_if
       check_empty_parenthesis
       check_too_many_parameters
