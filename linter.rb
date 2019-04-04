@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-# NormEZ_v1.6.1
+# NormEZ_v1.7.0
 # Changelog: Changed indentation check to match new coding style
 
 require 'optparse'
@@ -11,7 +11,11 @@ class String
   end
 
   def add_style(color_code)
-    "\e[#{color_code}m#{self}\e[0m"
+    if $options.include? :colorless
+      "#{self}"
+    else
+      "\e[#{color_code}m#{self}\e[0m"
+    end
   end
 
   def black
@@ -171,13 +175,14 @@ class CodingStyleChecker
       return
     end
     check_trailing_spaces_tabs
-    check_spaces_in_indentation
+    check_indentation
     if @type != FileType::MAKEFILE
       check_filename
       check_too_many_columns
       check_too_broad_filename
       check_header
       check_several_assignments
+      check_forbidden_keyword_func
       check_too_many_else_if
       check_empty_parenthesis
       check_too_many_parameters
@@ -354,16 +359,25 @@ class CodingStyleChecker
     end
   end
 
-  def check_spaces_in_indentation
+  def check_indentation
     line_nb = 1
+    if @type == FileType::MAKEFILE
+      valid_indent = '\t'
+      bad_indent_regexp = /^ +.*$/
+      bad_indent_name = 'space'
+    else
+      valid_indent = ' '
+      bad_indent_regexp = /^\t+.*$/
+      bad_indent_name = 'tabulation'
+    end
     @file.each_line do |line|
       indent = 0
-      while line[indent] == " "
+      while line[indent] == valid_indent
         indent += 1
       end
-      if line =~ /^\t+.*$/
+      if line =~ bad_indent_regexp
         msg_brackets = '[' + @file_path + ':' + line_nb.to_s + ']'
-        msg_error = ' Wrong indentation: tabulations are not allowed.'
+        msg_error = " Wrong indentation: #{bad_indent_name}s are not allowed."
         puts(msg_brackets.bold.green + msg_error.bold)
       elsif indent % 4 != 0
         msg_brackets = '[' + @file_path + ':' + line_nb.to_s + ']'
@@ -683,6 +697,9 @@ opt_parser = OptionParser.new do |opts|
   opts.on('-i', '--ignore-all', 'Ignore forbidden files & forbidden functions (same as `-fm`)') do |o|
     $options[:ignorefiles] = o
     $options[:ignorefunctions] = o
+  end
+  opts.on('-c', '--colorless', 'Disable output styling') do |o|
+    $options[:colorless] = o
   end
 end
 

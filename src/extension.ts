@@ -75,7 +75,13 @@ async function displayLineErrors(errors: FilesErrorType) {
     const diagnostics: vscode.Diagnostic[] = [];
     const currPath = path.join(rootPath, filePath);
     const fileErrors = errors[filePath];
-    const doc = await vscode.workspace.openTextDocument(currPath);
+
+    let doc;
+    try {
+      doc = await vscode.workspace.openTextDocument(currPath);
+    } catch (e) {
+      continue;
+    }
 
     for (const { line, error } of fileErrors) {
       let l, r;
