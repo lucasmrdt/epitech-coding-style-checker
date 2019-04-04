@@ -4,7 +4,7 @@
     "publisher": "lucasmarandat",
     "icon": "assets/icon.png",
     "description": "check your epitech coding style while you're coding",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "--baseContentUrl": "images",
     "repository": {
         "type": "git",
