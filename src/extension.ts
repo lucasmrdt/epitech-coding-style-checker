@@ -11,8 +11,32 @@ type FilesErrorType = {
   [path: string]: Array<ErrorType>,
 };
 
+const CONFIGURATION_ID = 'epitech-coding-style';
 const LINTER_PATH = path.join(__dirname, '../linter.rb');
-const DIAGNOSTIC = vscode.languages.createDiagnosticCollection('epitech-coding-style');
+const DIAGNOSTIC = vscode.languages.createDiagnosticCollection(CONFIGURATION_ID);
+
+const REGEX_BY_CONFIGURATION: {[key: string]: RegExp} = {
+  'allow_forbidden_function': RegExp('function is allowed'),
+};
+
+function isIgnoredError(error: string) {
+  const CONFIGURATION: {[key: string]: Boolean} | undefined = (
+    vscode.workspace.getConfiguration().get(CONFIGURATION_ID)
+  );
+  if (CONFIGURATION === undefined) {
+    return false;
+  }
+
+  let errorIsIgnored = false;
+  Object.keys(REGEX_BY_CONFIGURATION).forEach(key => {
+    const regexp = REGEX_BY_CONFIGURATION[key];
+    const isAllowedInConfiguration = CONFIGURATION[key] || false;
+    if (error.match(regexp) && isAllowedInConfiguration) {
+      errorIsIgnored = true;
+    }
+  });
+  return errorIsIgnored;
+}
 
 async function codingStyleChecker() {
   try {
@@ -86,6 +110,10 @@ async function displayLineErrors(errors: FilesErrorType) {
     for (const { line, error } of fileErrors) {
       let l, r;
 
+      if (isIgnoredError(error)) {
+        continue;
+      }
+
       if (!line) {
         // global error
         l = doc.lineAt(doc.lineCount - 1);
@@ -108,7 +136,9 @@ async function displayLineErrors(errors: FilesErrorType) {
 export async function activate(context: vscode.ExtensionContext) {
   console.log('epitech-coding-style-checker is now active!');
 
+  console.log();
   if (vscode.workspace) {
+    vscode.workspace.onDidChangeConfiguration(codingStyleChecker);
     vscode.workspace.onDidSaveTextDocument(codingStyleChecker);
     codingStyleChecker();
   }

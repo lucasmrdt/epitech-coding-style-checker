@@ -37,5 +37,19 @@
         "tslint": "^5.8.0",
         "typescript": "^2.6.1",
         "vscode": "^1.1.21"
+    },
+    "contributes": {
+        "configuration": [
+            {
+                "title": "Epitech Coding Style",
+                "properties": {
+                    "epitech-coding-style.allow_forbidden_function": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "allow forbidden functions"
+                    }
+                }
+            }
+        ]
     }
 }
