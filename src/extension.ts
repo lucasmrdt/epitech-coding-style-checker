@@ -1,34 +1,36 @@
-import * as vscode from 'vscode';
-import * as path from 'path';
-import { exec } from 'child_process';
+import * as vscode from "vscode";
+import * as path from "path";
+import { exec } from "child_process";
 
 type ErrorType = {
-  line: number,
-  error: string,
+  line: number;
+  error: string;
 };
 
 type FilesErrorType = {
-  [path: string]: Array<ErrorType>,
+  [path: string]: Array<ErrorType>;
 };
 
-const CONFIGURATION_ID = 'epitech-coding-style';
-const LINTER_PATH = path.join(__dirname, '../linter.rb');
-const DIAGNOSTIC = vscode.languages.createDiagnosticCollection(CONFIGURATION_ID);
+const CONFIGURATION_ID = "epitech-coding-style";
+const LINTER_PATH = path.join(__dirname, "../linter.rb");
+const DIAGNOSTIC = vscode.languages.createDiagnosticCollection(
+  CONFIGURATION_ID
+);
 
-const REGEX_BY_CONFIGURATION: {[key: string]: RegExp} = {
-  'allow_forbidden_function': RegExp('function is allowed'),
+const REGEX_BY_CONFIGURATION: { [key: string]: RegExp } = {
+  allow_forbidden_function: RegExp("function is allowed")
 };
 
 function isIgnoredError(error: string) {
-  const CONFIGURATION: {[key: string]: Boolean} | undefined = (
-    vscode.workspace.getConfiguration().get(CONFIGURATION_ID)
-  );
+  const CONFIGURATION:
+    | { [key: string]: Boolean }
+    | undefined = vscode.workspace.getConfiguration().get(CONFIGURATION_ID);
   if (CONFIGURATION === undefined) {
     return false;
   }
 
   let errorIsIgnored = false;
-  Object.keys(REGEX_BY_CONFIGURATION).forEach(key => {
+  Object.keys(REGEX_BY_CONFIGURATION).forEach(key => {
     const regexp = REGEX_BY_CONFIGURATION[key];
     const isAllowedInConfiguration = CONFIGURATION[key] || false;
     if (error.match(regexp) && isAllowedInConfiguration) {
@@ -49,49 +51,48 @@ async function codingStyleChecker() {
 }
 
 function runLinter() {
-  return new Promise((res: (p: string) => any, rej) => (
+  return new Promise((res: (p: string) => any, rej) =>
     exec(
       LINTER_PATH,
       { cwd: vscode.workspace.rootPath },
-      (err, stdout: string, stderr: string) => err ? rej(stderr) : res(stdout),
+      (err, stdout: string, stderr: string) => (err ? rej(stderr) : res(stdout))
     )
-  ));
+  );
 }
 
 function parseResult(result: string): FilesErrorType {
   // remove color ANSI.
-  const plainResult = result.replace(/\x1b\[[0-9;]*m/g, '');
+  const plainResult = result.replace(/\x1b\[[0-9;]*m/g, "");
 
-  const linterResults = plainResult.split('\n').map(
-    (res: string) => {
-      const matches = res.match(/\[(.+?):?(\d+)?\] (.+)/);
+  const linterResults = plainResult.split("\n").map((res: string) => {
+    const matches = res.match(/\[(.+?):?(\d+)?\] (.+)/);
 
-      // linter output is invalid.
-      if (!matches) { return null; }
+    // linter output is invalid.
+    if (!matches) {
+      return null;
+    }
 
-      const [, path, line, error] = matches;
-      return { path, line: parseInt(line), error };
-    },
-  );
+    const [, path, line, error] = matches;
+    return { path, line: parseInt(line), error };
+  });
 
   // remove invalid linter output.
   const filteredResults = linterResults.filter(el => el);
 
   // This is ugly sorry :( ....
-  return filteredResults.reduce((acc: any, curr: any) => ({
-    ...acc,
-    [curr.path]: (acc[curr.path]
-      ? [
-        ...acc[curr.path],
-        { line: curr.line, error: curr.error },
-      ]
-      : [{ line: curr.line, error: curr.error }]
-    ),
-  }), {});
+  return filteredResults.reduce(
+    (acc: any, curr: any) => ({
+      ...acc,
+      [curr.path]: acc[curr.path]
+        ? [...acc[curr.path], { line: curr.line, error: curr.error }]
+        : [{ line: curr.line, error: curr.error }]
+    }),
+    {}
+  );
 }
 
 async function displayLineErrors(errors: FilesErrorType) {
-  const rootPath = vscode.workspace.rootPath || '';
+  const rootPath = vscode.workspace.rootPath || "";
   const filesPath = Object.keys(errors);
   DIAGNOSTIC.clear();
 
@@ -124,8 +125,12 @@ async function displayLineErrors(errors: FilesErrorType) {
         r = new vscode.Range(line - 1, 0, line - 1, l.text.length);
       }
 
-      const d = new vscode.Diagnostic(r, error, vscode.DiagnosticSeverity.Error);
-      d.source = 'epitech-coding-style';
+      const d = new vscode.Diagnostic(
+        r,
+        error,
+        vscode.DiagnosticSeverity.Error
+      );
+      d.source = "epitech-coding-style";
       diagnostics.push(d);
     }
 
@@ -134,9 +139,8 @@ async function displayLineErrors(errors: FilesErrorType) {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-  console.log('epitech-coding-style-checker is now active!');
+  console.log("epitech-coding-style-checker is now active!");
 
-  console.log();
   if (vscode.workspace) {
     vscode.workspace.onDidChangeConfiguration(codingStyleChecker);
     vscode.workspace.onDidSaveTextDocument(codingStyleChecker);
@@ -145,5 +149,4 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {
-}
+export function deactivate() {}
